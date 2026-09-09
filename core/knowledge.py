@@ -6,6 +6,9 @@ Answers general knowledge questions using the Wikipedia API.
 
 import wikipedia
 
+# Set valid User-Agent required by Wikipedia API policy
+wikipedia.set_user_agent("AtlasVoiceAssistant/1.0 (https://github.com/sumithanagandi7-art/task_1-Oasis; atlas@example.com)")
+
 
 def answer_question(topic: str) -> dict:
     """
@@ -31,8 +34,12 @@ def answer_question(topic: str) -> dict:
 
     try:
         # Try to get a summary directly
-        summary = wikipedia.summary(topic, sentences=3, auto_suggest=True)
-        page = wikipedia.page(topic, auto_suggest=True)
+        try:
+            summary = wikipedia.summary(topic, sentences=3, auto_suggest=False)
+            page = wikipedia.page(topic, auto_suggest=False)
+        except (wikipedia.PageError, wikipedia.DisambiguationError):
+            summary = wikipedia.summary(topic, sentences=3, auto_suggest=True)
+            page = wikipedia.page(topic, auto_suggest=True)
 
         return {
             "success": True,
