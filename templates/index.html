@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Atlas — AI-powered voice assistant with NLP, weather, email, reminders, and smart search capabilities.">
+    <title>{{ assistant_name }} — 3D Cybernetic Voice Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- 3D Cosmic Starfield Canvas -->
+    <canvas id="bg-canvas" class="bg-3d-canvas"></canvas>
+    <!-- Background Animated Gradient Layer -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Main Container -->
+    <div id="app" class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                </div>
+                <div class="header-info">
+                    <h1 id="assistant-name">{{ assistant_name }}</h1>
+                    <span class="status-badge" id="status-badge">
+                        <span class="status-dot"></span>
+                        Connecting...
+                    </span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" id="btn-train" title="Neural Training Studio" aria-label="Open neural training studio">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93l-.75.14V14h3a3 3 0 0 1 3 3v1a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-1"/>
+                        <path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93l.75.14V14H9a3 3 0 0 0-3 3v1a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-1"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="btn-reminders" title="Reminders" aria-label="View reminders">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="badge" id="reminder-count" style="display:none;">0</span>
+                </button>
+                <button class="icon-btn" id="btn-settings" title="Settings" aria-label="Open settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Quick Action Cards -->
+            <div class="quick-actions" id="quick-actions">
+                <button class="action-card" data-action="time" id="action-time">
+                    <div class="action-icon">🕐</div>
+                    <span>Time</span>
+                </button>
+                <button class="action-card" data-action="date" id="action-date">
+                    <div class="action-icon">📅</div>
+                    <span>Date</span>
+                </button>
+                <button class="action-card" data-action="weather" id="action-weather">
+                    <div class="action-icon">🌤️</div>
+                    <span>Weather</span>
+                </button>
+                <button class="action-card" data-action="search" id="action-search">
+                    <div class="action-icon">🔍</div>
+                    <span>Search</span>
+                </button>
+                <button class="action-card" data-action="email" id="action-email">
+                    <div class="action-icon">📧</div>
+                    <span>Email</span>
+                </button>
+                <button class="action-card" data-action="reminder" id="action-reminder">
+                    <div class="action-icon">⏰</div>
+                    <span>Reminder</span>
+                </button>
+                <button class="action-card" data-action="music" id="action-music">
+                    <div class="action-icon">🎵</div>
+                    <span>Music</span>
+                </button>
+                <button class="action-card" data-action="notepad" id="action-notepad">
+                    <div class="action-icon">📝</div>
+                    <span>Notepad</span>
+                </button>
+                <button class="action-card" data-action="calc" id="action-calc">
+                    <div class="action-icon">🧮</div>
+                    <span>Calc</span>
+                </button>
+                <button class="action-card" data-action="vol_up" id="action-vol-up">
+                    <div class="action-icon">🔊</div>
+                    <span>Vol +</span>
+                </button>
+                <button class="action-card" data-action="battery" id="action-battery">
+                    <div class="action-icon">🔋</div>
+                    <span>Battery</span>
+                </button>
+                <button class="action-card" data-action="teach" id="action-teach">
+                    <div class="action-icon">🧠</div>
+                    <span>Teach Me</span>
+                </button>
+            </div>
+
+            <!-- Chat Transcript -->
+            <div class="chat-container" id="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages will be inserted here -->
+                </div>
+            </div>
+
+            <!-- 3D Cybernetic Voice Orb -->
+            <div class="orb-container" id="orb-container">
+                <!-- Three.js 3D Interactive WebGL Canvas -->
+                <canvas id="orb-3d-canvas" class="orb-3d-canvas"></canvas>
+                <canvas id="waveform-canvas" class="waveform-canvas"></canvas>
+
+                <div class="orb-rings">
+                    <div class="orb-ring ring-1"></div>
+                    <div class="orb-ring ring-2"></div>
+                    <div class="orb-ring ring-3"></div>
+                </div>
+                <button class="voice-orb" id="voice-orb" title="Click to speak" aria-label="Activate voice input">
+                    <div class="orb-inner">
+                        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                        <div class="orb-processing">
+                            <div class="processing-dot"></div>
+                            <div class="processing-dot"></div>
+                            <div class="processing-dot"></div>
+                        </div>
+                    </div>
+                </button>
+                <p class="orb-label" id="orb-label">Tap to speak</p>
+                <div class="orb-state-indicator" id="orb-state-indicator">AI STANDBY</div>
+            </div>
+
+        </main>
+
+        <!-- Text Input Bar -->
+        <div class="input-bar">
+            <div class="input-wrapper">
+                <input type="text" id="text-input" placeholder="Type a message or tap the mic..." autocomplete="off" aria-label="Type a message">
+                <button class="send-btn" id="btn-send" title="Send" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal" style="display:none;">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="settings-close" aria-label="Close settings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Voice Settings -->
+                <div class="settings-section">
+                    <h3>🗣️ Voice</h3>
+                    <div class="setting-row">
+                        <label for="voice-select">Voice</label>
+                        <select id="voice-select" class="setting-control"></select>
+                    </div>
+                    <div class="setting-row">
+                        <label for="voice-rate">Speed</label>
+                        <input type="range" id="voice-rate" min="0.5" max="2" step="0.1" value="1" class="setting-control">
+                        <span id="rate-value">1.0x</span>
+                    </div>
+                    <div class="setting-row">
+                        <label for="voice-volume">Volume</label>
+                        <input type="range" id="voice-volume" min="0" max="1" step="0.1" value="1" class="setting-control">
+                        <span id="volume-value">100%</span>
+                    </div>
+                </div>
+
+                <!-- Service Status & API Keys -->
+                <div class="settings-section">
+                    <h3>🔑 API Keys & Configuration</h3>
+                    <div class="setting-row">
+                        <label for="cfg-assistant-name">Assistant Name</label>
+                        <input type="text" id="cfg-assistant-name" placeholder="Atlas" class="setting-control text-input">
+                    </div>
+                    <div class="setting-row">
+                        <label for="cfg-city">Default City</label>
+                        <input type="text" id="cfg-city" placeholder="e.g. London, New York" class="setting-control text-input">
+                    </div>
+                    <div class="setting-row">
+                        <label for="cfg-weather-key">OpenWeather Key</label>
+                        <input type="password" id="cfg-weather-key" placeholder="OpenWeatherMap API Key..." class="setting-control text-input">
+                    </div>
+                    <div class="setting-row">
+                        <label for="cfg-gemini-key">Gemini AI Key</label>
+                        <input type="password" id="cfg-gemini-key" placeholder="Google Gemini API Key..." class="setting-control text-input">
+                    </div>
+                    <div class="setting-row">
+                        <label for="cfg-email">Gmail Address</label>
+                        <input type="email" id="cfg-email" placeholder="your_email@gmail.com" class="setting-control text-input">
+                    </div>
+                    <div class="setting-row">
+                        <label for="cfg-email-pwd">Gmail App Password</label>
+                        <input type="password" id="cfg-email-pwd" placeholder="16-char App Password..." class="setting-control text-input">
+                    </div>
+                    <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+                        <button class="btn-add-cmd" id="btn-save-settings" style="padding: 8px 18px;">💾 Save Settings</button>
+                    </div>
+                </div>
+
+                <!-- Service Status -->
+                <div class="settings-section">
+                    <h3>🔌 Services Status</h3>
+                    <div class="service-status" id="service-status">
+                        <div class="service-row">
+                            <span>Weather API</span>
+                            <span class="service-indicator" id="svc-weather">Checking...</span>
+                        </div>
+                        <div class="service-row">
+                            <span>Gemini Conversational AI</span>
+                            <span class="service-indicator" id="svc-gemini">Checking...</span>
+                        </div>
+                        <div class="service-row">
+                            <span>Email (SMTP)</span>
+                            <span class="service-indicator" id="svc-email">Checking...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Commands -->
+                <div class="settings-section">
+                    <h3>⚙️ Custom Commands</h3>
+                    <div class="custom-commands-list" id="custom-commands-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div class="add-command-form">
+                        <input type="text" id="cmd-trigger" placeholder="Trigger phrase..." class="cmd-input">
+                        <input type="text" id="cmd-response" placeholder="Response text..." class="cmd-input">
+                        <button class="btn-add-cmd" id="btn-add-cmd">+ Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Neural Training Studio Modal -->
+    <div class="modal-overlay" id="train-modal" style="display:none;">
+        <div class="modal glass-panel train-modal-panel">
+            <div class="modal-header">
+                <h2>🧠 Neural Training Studio</h2>
+                <button class="modal-close" id="train-close" aria-label="Close training studio">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Training Metrics Dashboard -->
+                <div class="train-metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Model Accuracy</span>
+                        <span class="metric-value" id="metric-acc">--%</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Loss</span>
+                        <span class="metric-value" id="metric-loss">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Epochs</span>
+                        <span class="metric-value" id="metric-iter">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Training Samples</span>
+                        <span class="metric-value" id="metric-samples">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Vocabulary</span>
+                        <span class="metric-value" id="metric-vocab">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Active Skills</span>
+                        <span class="metric-value" id="metric-classes">--</span>
+                    </div>
+                </div>
+
+                <!-- Intent Selector & Utterances Editor -->
+                <div class="settings-section">
+                    <h3>🎯 Train Skill / Intent</h3>
+                    <div class="setting-row">
+                        <label for="train-intent-select">Select Intent</label>
+                        <select id="train-intent-select" class="setting-control" style="width: 220px;"></select>
+                    </div>
+                    
+                    <div class="utterances-container" style="margin-top: 10px;">
+                        <span class="metric-label" style="display:block; margin-bottom: 6px;">Training Phrases (<span id="pattern-count">0</span>):</span>
+                        <div class="pattern-tags" id="pattern-tags-list">
+                            <!-- Populated with tags -->
+                        </div>
+                    </div>
+
+                    <div class="add-pattern-form" style="margin-top: 14px;">
+                        <span class="metric-label" style="display:block; margin-bottom: 6px;">Teach New Phrase:</span>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="train-new-pattern" placeholder="e.g. 'check the temperature' or 'drop the beat'..." class="cmd-input">
+                            <button class="btn-add-cmd" id="btn-add-pattern">+ Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Skill Creator -->
+                <div class="settings-section">
+                    <h3>✨ Create Brand New Skill</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="text" id="new-skill-name" placeholder="Skill identifier (e.g. workout_routine)..." class="cmd-input">
+                        <input type="text" id="new-skill-pattern" placeholder="Trigger phrase (e.g. 'start my workout')..." class="cmd-input">
+                        <input type="text" id="new-skill-response" placeholder="Response or action message..." class="cmd-input">
+                        <button class="btn-add-cmd" id="btn-create-skill" style="align-self: flex-start;">+ Create Skill</button>
+                    </div>
+                </div>
+
+                <!-- Retrain Action Button -->
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px;">
+                    <button class="btn-retrain-glow" id="btn-retrain-neural">
+                        <span class="retrain-icon">⚡</span>
+                        <span id="btn-retrain-text">Retrain Neural Network Now</span>
+                    </button>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">Trains the Multi-Layer Perceptron neural network directly on your added phrases.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminders Modal -->
+    <div class="modal-overlay" id="reminders-modal" style="display:none;">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h2>Active Reminders</h2>
+                <button class="modal-close" id="reminders-close" aria-label="Close reminders">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="reminders-list" id="reminders-list">
+                    <p class="empty-state">No active reminders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder Alert Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+</body>
+</html>

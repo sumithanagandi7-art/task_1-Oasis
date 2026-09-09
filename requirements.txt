@@ -1,0 +1,12 @@
+flask==3.1.1
+flask-socketio==5.5.1
+flask-cors==5.0.1
+simple-websocket==1.1.0
+SpeechRecognition==3.14.1
+pyttsx3==2.98
+nltk==3.9.1
+numpy==2.2.5
+scikit-learn==1.6.1
+wikipedia==1.4.0
+python-dotenv==1.1.0
+requests==2.32.3

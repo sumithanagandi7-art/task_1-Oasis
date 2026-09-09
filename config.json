@@ -1,0 +1,360 @@
+{
+  "assistant_name": "Atlas",
+  "wake_word": "hey atlas",
+  "voice_rate": 175,
+  "voice_volume": 1.0,
+  "intents": {
+    "greeting": {
+      "patterns": [
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "howdy",
+        "what's up",
+        "greetings",
+        "hey there",
+        "hi there",
+        "hello there",
+        "yo",
+        "sup",
+        "hiya",
+        "good day",
+        "howdy partner ai"
+      ],
+      "responses": [
+        "Hello! How can I help you today?",
+        "Hi there! What can I do for you?",
+        "Hey! I'm ready to assist you.",
+        "Greetings! What would you like me to do?",
+        "Hello! I'm Atlas, your voice assistant. How may I help?"
+      ]
+    },
+    "goodbye": {
+      "patterns": [
+        "bye",
+        "goodbye",
+        "see you",
+        "see you later",
+        "take care",
+        "good night",
+        "I'm leaving",
+        "exit",
+        "quit",
+        "stop",
+        "shut down",
+        "that's all",
+        "nothing else",
+        "I'm done"
+      ],
+      "responses": [
+        "Goodbye! Have a wonderful day!",
+        "See you later! Take care!",
+        "Bye! Feel free to call me anytime.",
+        "Until next time! Take care."
+      ]
+    },
+    "time": {
+      "patterns": [
+        "what time is it",
+        "tell me the time",
+        "current time",
+        "what's the time",
+        "time please",
+        "do you know the time",
+        "can you tell me the time",
+        "what is the current time",
+        "time right now",
+        "what time do we have"
+      ],
+      "responses": []
+    },
+    "date": {
+      "patterns": [
+        "what's the date",
+        "what date is it",
+        "tell me the date",
+        "current date",
+        "today's date",
+        "what day is it",
+        "what is today",
+        "what's today's date",
+        "date today",
+        "which day is today",
+        "what day of the week"
+      ],
+      "responses": []
+    },
+    "search": {
+      "patterns": [
+        "search for",
+        "look up",
+        "google",
+        "find information about",
+        "search the web for",
+        "can you search",
+        "web search",
+        "search online for",
+        "find me",
+        "look for",
+        "search about",
+        "I want to search",
+        "browse for",
+        "find out about"
+      ],
+      "responses": [
+        "Let me search that for you.",
+        "Searching the web now.",
+        "I'll look that up for you right away."
+      ]
+    },
+    "weather": {
+      "patterns": [
+        "what's the weather",
+        "weather today",
+        "how's the weather",
+        "tell me the weather",
+        "weather forecast",
+        "is it going to rain",
+        "temperature outside",
+        "weather in",
+        "what's the temperature",
+        "how hot is it",
+        "how cold is it",
+        "weather report",
+        "current weather",
+        "weather update",
+        "will it rain today"
+      ],
+      "responses": []
+    },
+    "email": {
+      "patterns": [
+        "send an email",
+        "compose email",
+        "write an email",
+        "email someone",
+        "send a message",
+        "compose a mail",
+        "I want to send an email",
+        "help me send an email",
+        "draft an email",
+        "send mail",
+        "email to"
+      ],
+      "responses": [
+        "Sure, let me help you compose an email."
+      ]
+    },
+    "reminder": {
+      "patterns": [
+        "set a reminder",
+        "remind me",
+        "set an alarm",
+        "create a reminder",
+        "alert me",
+        "remember to",
+        "don't let me forget",
+        "remind me to",
+        "set timer",
+        "wake me up",
+        "notify me",
+        "remind me in",
+        "set a timer for",
+        "reminder for"
+      ],
+      "responses": []
+    },
+    "question": {
+      "patterns": [
+        "what is",
+        "who is",
+        "tell me about",
+        "explain",
+        "define",
+        "what are",
+        "who was",
+        "what does",
+        "how does",
+        "why is",
+        "when was",
+        "where is",
+        "what do you know about",
+        "give me information about",
+        "can you tell me about",
+        "I want to know about"
+      ],
+      "responses": []
+    },
+    "help": {
+      "patterns": [
+        "help",
+        "what can you do",
+        "your capabilities",
+        "list commands",
+        "show commands",
+        "how do I use you",
+        "what are your features",
+        "what do you do",
+        "guide me",
+        "help me",
+        "instructions",
+        "how to use"
+      ],
+      "responses": [
+        "I can help you with many things! Try asking me about the time, weather, searching the web, sending emails, setting reminders, or answering general knowledge questions. You can also create custom commands!"
+      ]
+    },
+    "thanks": {
+      "patterns": [
+        "thank you",
+        "thanks",
+        "appreciate it",
+        "thank you so much",
+        "thanks a lot",
+        "that's helpful",
+        "great job",
+        "well done",
+        "awesome",
+        "perfect",
+        "nice work"
+      ],
+      "responses": [
+        "You're welcome! Happy to help!",
+        "Anytime! That's what I'm here for.",
+        "Glad I could help!",
+        "My pleasure! Let me know if you need anything else."
+      ]
+    },
+    "custom_add": {
+      "patterns": [
+        "add command",
+        "create command",
+        "new command",
+        "add custom command",
+        "teach you",
+        "learn this",
+        "add a new command",
+        "register command",
+        "define command"
+      ],
+      "responses": [
+        "Sure! Tell me the trigger phrase and the response you'd like."
+      ]
+    },
+    "teach_mode": {
+      "patterns": [
+        "teach mode",
+        "teach me",
+        "enter teach mode",
+        "train assistant",
+        "train ai",
+        "teach you a command",
+        "learn a new phrase",
+        "teach new command"
+      ],
+      "responses": [
+        "Teach mode activated. What trigger phrase would you like to teach me?"
+      ]
+    },
+    "system_volume": {
+      "patterns": [
+        "volume up",
+        "turn up the volume",
+        "increase volume",
+        "make it louder",
+        "raise volume",
+        "volume down",
+        "turn down the volume",
+        "decrease volume",
+        "make it quieter",
+        "lower volume",
+        "mute",
+        "mute volume",
+        "mute audio",
+        "silence audio",
+        "unmute",
+        "unmute volume"
+      ],
+      "responses": []
+    },
+    "app_launch": {
+      "patterns": [
+        "open notepad",
+        "launch notepad",
+        "open calculator",
+        "launch calculator",
+        "open calc",
+        "open paint",
+        "launch paint",
+        "open visual studio code",
+        "open vs code",
+        "open code",
+        "open file explorer",
+        "open explorer",
+        "open command prompt",
+        "open terminal",
+        "open chrome",
+        "open edge",
+        "open browser"
+      ],
+      "responses": []
+    },
+    "music_play": {
+      "patterns": [
+        "play music",
+        "play song",
+        "play on youtube",
+        "play on spotify",
+        "play some lofi",
+        "put on some music",
+        "play track",
+        "play bohemian rhapsody",
+        "play jazz on youtube"
+      ],
+      "responses": []
+    },
+    "media_control": {
+      "patterns": [
+        "pause music",
+        "pause song",
+        "resume music",
+        "pause playback",
+        "next song",
+        "next track",
+        "skip track",
+        "skip song",
+        "previous track",
+        "previous song"
+      ],
+      "responses": []
+    },
+    "system_info": {
+      "patterns": [
+        "check battery",
+        "battery status",
+        "how much battery",
+        "battery level",
+        "system status",
+        "system telemetry"
+      ],
+      "responses": []
+    },
+    "system_lock": {
+      "patterns": [
+        "lock screen",
+        "lock computer",
+        "lock workstation",
+        "lock the pc"
+      ],
+      "responses": []
+    }
+  },
+  "custom_commands": {
+    "coding time": "Happy coding! Opening your workspace.",
+    "launch orbital scan": "Orbital sensors online. Area is clear.",
+    "initialize quantum core": "Quantum core operating at 99.8% thermal efficiency. All containment fields stable."
+  }
+}
