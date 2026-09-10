@@ -22,8 +22,11 @@ def _load_config() -> dict:
 
 def _save_config(config: dict):
     """Save the full config to config.json."""
-    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-        json.dump(config, f, indent=2, ensure_ascii=False)
+    try:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(config, f, indent=2, ensure_ascii=False)
+    except OSError:
+        pass
 
 
 def add_custom_command(trigger: str, response: str, action: str = "response") -> bool:

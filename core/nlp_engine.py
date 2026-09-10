@@ -18,10 +18,17 @@ from nltk.stem import LancasterStemmer
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import LabelEncoder
 
-# Download required NLTK data
-nltk.download('punkt', quiet=True)
-nltk.download('punkt_tab', quiet=True)
-nltk.download('stopwords', quiet=True)
+# Download required NLTK data (safe for serverless read-only environments)
+_nltk_data_dir = os.environ.get("NLTK_DATA", "/tmp/nltk_data")
+if _nltk_data_dir not in nltk.data.path:
+    nltk.data.path.append(_nltk_data_dir)
+try:
+    os.makedirs(_nltk_data_dir, exist_ok=True)
+    nltk.download('punkt', download_dir=_nltk_data_dir, quiet=True)
+    nltk.download('punkt_tab', download_dir=_nltk_data_dir, quiet=True)
+    nltk.download('stopwords', download_dir=_nltk_data_dir, quiet=True)
+except Exception:
+    pass
 
 stemmer = LancasterStemmer()
 
@@ -56,15 +63,31 @@ class NLPEngine:
 
     def _load_config(self):
         """Load intent patterns and custom commands from config.json."""
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            config = json.load(f)
+        config = {}
+        candidate_paths = [
+            CONFIG_PATH,
+            Path.cwd() / "config.json",
+            Path(__file__).parent / "config.json",
+            Path(__file__).resolve().parent.parent / "config.json",
+        ]
+        for p in candidate_paths:
+            if p.exists():
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        config = json.load(f)
+                    break
+                except Exception:
+                    pass
         self.intents_data = config.get("intents", {})
         self.custom_commands = config.get("custom_commands", {})
 
     def _tokenize_and_stem(self, sentence: str) -> list:
         """Tokenize and stem a sentence into a list of root words."""
-        # Simple tokenizer that handles punctuation
-        tokens = nltk.word_tokenize(sentence.lower())
+        try:
+            tokens = nltk.word_tokenize(sentence.lower())
+        except Exception:
+            import re
+            tokens = re.findall(r'\b[a-zA-Z0-9]+\b', sentence.lower())
         # Remove non-alphanumeric tokens
         tokens = [t for t in tokens if t.isalnum()]
         return [self.stemmer.stem(w) for w in tokens]

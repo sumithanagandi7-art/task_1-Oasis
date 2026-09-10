@@ -148,8 +148,8 @@ function initSpeechRecognition() {
         // Add user message to chat
         addMessage('user', transcript);
 
-        // Send to backend via WebSocket
-        socket.emit('voice_input', { text: transcript, confidence });
+        // Send to backend
+        dispatchInput(transcript);
     };
 
     recognition.onerror = (event) => {
@@ -411,13 +411,32 @@ socket.on('disconnect', () => {
     console.log('❌ Disconnected from server');
 });
 
+// Auto-detect serverless cloud mode (e.g. Vercel) if WebSockets are unavailable
+setTimeout(() => {
+    if (!state.isConnected) {
+        fetch('/api/status')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'running') {
+                    state.isConnected = true;
+                    elements.statusBadge.className = 'status-badge connected';
+                    elements.statusBadge.innerHTML = '<span class="status-dot"></span>Online (Cloud)';
+                    if (elements.chatMessages.children.length === 0) {
+                        addMessage('assistant', `Hello! I'm ${data.assistant_name || 'Atlas'}, your voice assistant. How can I help you today?`);
+                    }
+                }
+            })
+            .catch(() => {});
+    }
+}, 1500);
+
 socket.on('connected', (data) => {
     console.log(`🤖 ${data.message}`);
     // Welcome message
     addMessage('assistant', `Hello! I'm ${data.assistant_name}, your voice assistant. How can I help you today? Try saying "Hello", asking for the time, or searching the web!`);
 });
 
-socket.on('assistant_response', (data) => {
+function handleAssistantResponse(data) {
     state.isProcessing = false;
 
     // Add assistant message to chat
@@ -428,12 +447,41 @@ socket.on('assistant_response', (data) => {
 
     // Handle special actions
     if (data.action === 'search' && data.data && data.data.url) {
-        // Search opens in the backend via webbrowser; no extra action needed
+        // Search opens in the backend via webbrowser or client
     }
 
     if (data.action === 'reminder_set') {
         updateReminderCount();
     }
+}
+
+function dispatchInput(text) {
+    if (socket && socket.connected) {
+        socket.emit('text_input', { text });
+    } else {
+        // REST fallback for serverless hosting (e.g. Vercel)
+        fetch('/api/process', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            handleAssistantResponse(data);
+        })
+        .catch(err => {
+            console.error('REST fallback error:', err);
+            handleAssistantResponse({
+                response: "I'm having trouble connecting to the server. Please try again.",
+                action: "error",
+                intent: "unknown"
+            });
+        });
+    }
+}
+
+socket.on('assistant_response', (data) => {
+    handleAssistantResponse(data);
 });
 
 socket.on('reminder_alert', (data) => {
@@ -520,7 +568,7 @@ function sendTextInput() {
     elements.orbLabel.textContent = 'Processing...';
 
     // Send to backend
-    socket.emit('text_input', { text });
+    dispatchInput(text);
 }
 
 elements.btnSend.addEventListener('click', sendTextInput);

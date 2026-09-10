@@ -30,7 +30,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Flask app
-app = Flask(__name__)
+BASE_DIR = Path(__file__).resolve().parent
+app = Flask(
+    __name__,
+    template_folder=str(BASE_DIR / "templates"),
+    static_folder=str(BASE_DIR / "static")
+)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "atlas-voice-assistant-secret")
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
@@ -186,10 +191,15 @@ def api_save_settings():
     if data.get("email_password"):
         env_dict["EMAIL_PASSWORD"] = data["email_password"].strip()
 
-    with open(env_file, "w", encoding="utf-8") as f:
-        for k, v in env_dict.items():
-            f.write(f"{k}={v}\n")
-            os.environ[k] = v
+    try:
+        with open(env_file, "w", encoding="utf-8") as f:
+            for k, v in env_dict.items():
+                f.write(f"{k}={v}\n")
+    except OSError:
+        pass
+
+    for k, v in env_dict.items():
+        os.environ[k] = v
 
     load_dotenv(override=True)
     return jsonify({"success": True, "message": "Settings updated successfully."})
