@@ -136,13 +136,22 @@ class CommandHandler:
         query = entities.get("query", text)
         if not query or query == text.lower():
             # Try to extract query more aggressively
-            query = text
+            query = text.replace("search for", "").replace("search", "").strip()
+        
+        # Use Gemini with Google Search Grounding to fetch a real-time answer
+        llm_result = generate_llm_response(query, assistant_name="Jarvis")
         search_url = f"https://www.google.com/search?q={urllib.parse.quote(query)}"
-        webbrowser.open(search_url)
+        
+        if llm_result.get("success") and llm_result.get("engine") == "gemini":
+            response_text = llm_result["response"]
+        else:
+            response_text = f"Here is what I found on the web for '{query}'."
+            webbrowser.open(search_url)
+
         return {
-            "response": f"Searching the web for '{query}'.",
+            "response": response_text,
             "action": "search",
-            "data": {"query": query, "url": search_url}
+            "data": {"query": query, "url": search_url, "source": llm_result.get("engine", "web")}
         }
 
     # ──────────────────────────────────────────────

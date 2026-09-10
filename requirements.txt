@@ -10,3 +10,4 @@ scikit-learn==1.6.1
 wikipedia==1.4.0
 python-dotenv==1.1.0
 requests==2.32.3
+pdf2docx==0.5.8

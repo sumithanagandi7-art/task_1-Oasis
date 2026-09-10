@@ -41,7 +41,10 @@ def generate_llm_response(prompt: str, assistant_name: str = "Atlas") -> Dict[st
                 "generationConfig": {
                     "temperature": 0.7,
                     "maxOutputTokens": 150
-                }
+                },
+                "tools": [
+                    {"googleSearch": {}}
+                ]
             }
             req = urllib.request.Request(
                 url,

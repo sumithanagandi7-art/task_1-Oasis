@@ -21,7 +21,7 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -49,6 +49,7 @@ from core.custom_commands import (
     remove_custom_command,
 )
 from core.email_handler import validate_email_config
+from core.converter import convert_file
 
 # Initialize the command handler with socketio reference
 handler = get_command_handler(socketio=socketio)
@@ -63,7 +64,7 @@ handler = get_command_handler(socketio=socketio)
 @app.route("/api")
 def index():
     """Serve the main web UI."""
-    assistant_name = os.getenv("ASSISTANT_NAME", "Atlas")
+    assistant_name = os.getenv("ASSISTANT_NAME", "Jarvis")
     return render_template("index.html", assistant_name=assistant_name)
 
 
@@ -167,11 +168,33 @@ def api_process_text():
     return jsonify(result)
 
 
+@app.route("/api/convert", methods=["POST"])
+def api_convert_file():
+    """Convert uploaded PDF to DOCX or DOCX to PDF."""
+    if "file" not in request.files:
+        return jsonify({"success": False, "error": "No file uploaded."}), 400
+        
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"success": False, "error": "No file selected."}), 400
+        
+    result = convert_file(file.stream, file.filename)
+    if result.get("success"):
+        # Send the converted file as an attachment
+        return send_file(
+            result["file_path"],
+            as_attachment=True,
+            download_name=result["filename"]
+        )
+    else:
+        return jsonify(result), 400
+
+
 @app.route("/api/settings", methods=["GET"])
 def api_get_settings():
     """Get settings and configuration status."""
     return jsonify({
-        "assistant_name": os.getenv("ASSISTANT_NAME", "Atlas"),
+        "assistant_name": os.getenv("ASSISTANT_NAME", "Jarvis"),
         "default_city": os.getenv("DEFAULT_CITY", "Mumbai"),
         "has_weather_key": bool(os.getenv("OPENWEATHERMAP_API_KEY") and os.getenv("OPENWEATHERMAP_API_KEY") != "your_api_key_here"),
         "has_gemini_key": bool(os.getenv("GEMINI_API_KEY") and os.getenv("GEMINI_API_KEY") != "your_gemini_api_key_here"),

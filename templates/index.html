@@ -118,7 +118,14 @@
                     <div class="action-icon">🧠</div>
                     <span>Teach Me</span>
                 </button>
+                <button class="action-card" data-action="convert" id="action-convert">
+                    <div class="action-icon">📄</div>
+                    <span>Convert Doc</span>
+                </button>
             </div>
+            
+            <!-- Hidden file input for document conversion -->
+            <input type="file" id="file-converter-input" accept=".pdf,.docx" style="display: none;">
 
             <!-- Chat Transcript -->
             <div class="chat-container" id="chat-container">

@@ -23,6 +23,8 @@ const state = {
     isSpeaking: false,
     isConnected: false,
     recognition: null,
+    wakeWordRecognition: null,
+    isWakeWordListening: false,
     synthesis: window.speechSynthesis,
     voices: [],
     settings: loadSettings(),
@@ -187,11 +189,110 @@ function initSpeechRecognition() {
         state.isListening = false;
         if (!state.isProcessing) {
             updateOrbState('idle');
-            elements.orbLabel.textContent = 'Tap to speak';
+            elements.orbLabel.textContent = 'Tap to speak or say "Jarvis"';
+            
+            // Resume wake word listener when main listener ends
+            if (!state.isSpeaking && state.wakeWordRecognition && !state.isWakeWordListening) {
+                try {
+                    state.wakeWordRecognition.start();
+                } catch(e) { }
+            }
         }
     };
 
     state.recognition = recognition;
+}
+
+function initWakeWordListener() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const wakeRecognition = new SpeechRecognition();
+    wakeRecognition.continuous = true;
+    wakeRecognition.interimResults = false;
+    wakeRecognition.lang = 'en-US';
+
+    wakeRecognition.onstart = () => {
+        state.isWakeWordListening = true;
+        if (!state.isListening && !state.isProcessing && !state.isSpeaking) {
+            elements.orbLabel.textContent = 'Listening for "Jarvis"...';
+            elements.orbIndicator.textContent = '🤖 WAKE WORD ACTIVE';
+            elements.orbIndicator.style.color = '#8b5cf6';
+            elements.orbIndicator.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+        }
+    };
+
+    wakeRecognition.onresult = (event) => {
+        const lastResult = event.results[event.results.length - 1];
+        if (!lastResult.isFinal) return;
+
+        const transcript = lastResult[0].transcript.toLowerCase().trim();
+        console.log(`[Wake Word] Heard: "${transcript}"`);
+
+        // Check if wake word is spoken
+        if (transcript.includes('jarvis')) {
+            console.log('🌟 Wake Word Detected!');
+            wakeRecognition.stop(); // Stop wake word listener
+            
+            // Extract any command spoken right after "jarvis"
+            const parts = transcript.split('jarvis');
+            let command = parts.length > 1 ? parts[1].trim() : '';
+            
+            // Remove common filler words after wake word
+            command = command.replace(/^(can you|please|could you|i want to)\s+/i, '');
+
+            if (command) {
+                // If they said "Hey Jarvis what time is it", process immediately
+                addMessage('user', command);
+                updateOrbState('processing');
+                dispatchInput(command);
+            } else {
+                // Just heard "Jarvis", trigger normal listening beep
+                playWakeSound();
+                if (state.recognition) {
+                    try {
+                        state.recognition.start();
+                    } catch(e) { }
+                }
+            }
+        }
+    };
+
+    wakeRecognition.onerror = (event) => {
+        state.isWakeWordListening = false;
+    };
+
+    wakeRecognition.onend = () => {
+        state.isWakeWordListening = false;
+        // Auto-restart continuous listening if not currently processing or speaking
+        if (!state.isListening && !state.isProcessing && !state.isSpeaking) {
+            try {
+                wakeRecognition.start();
+            } catch(e) {}
+        }
+    };
+
+    state.wakeWordRecognition = wakeRecognition;
+}
+
+function playWakeSound() {
+    // A subtle beep to let the user know Jarvis is listening
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+    
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.3);
 }
 
 
@@ -249,7 +350,12 @@ function speak(text) {
         state.isSpeaking = false;
         state.isProcessing = false;
         updateOrbState('idle');
-        elements.orbLabel.textContent = 'Tap to speak';
+        elements.orbLabel.textContent = 'Listening for "Jarvis"...';
+        
+        // Restart wake word listener after speaking finishes
+        if (state.wakeWordRecognition && !state.isWakeWordListening) {
+            try { state.wakeWordRecognition.start(); } catch(e) {}
+        }
     };
 
     utterance.onerror = () => {
@@ -521,7 +627,10 @@ elements.voiceOrb.addEventListener('click', () => {
         }
         state.isListening = false;
         updateOrbState('idle');
-        elements.orbLabel.textContent = 'Tap to speak';
+        elements.orbLabel.textContent = 'Listening for "Jarvis"...';
+        if (state.wakeWordRecognition && !state.isWakeWordListening) {
+            try { state.wakeWordRecognition.start(); } catch(e) {}
+        }
         return;
     }
 
@@ -534,8 +643,11 @@ elements.voiceOrb.addEventListener('click', () => {
         return;
     }
 
-    // Start listening
+    // Start listening (manual override)
     if (state.recognition) {
+        if (state.wakeWordRecognition && state.isWakeWordListening) {
+            state.wakeWordRecognition.stop(); // Stop wake word to use main mic
+        }
         try {
             state.recognition.start();
         } catch (e) {
@@ -601,11 +713,83 @@ document.querySelectorAll('.action-card').forEach(card => {
             battery: "Check battery status",
         };
 
+        if (action === 'convert') {
+            const fileInput = document.getElementById('file-converter-input');
+            if (fileInput) {
+                fileInput.click();
+            }
+            return;
+        }
+
         const text = actionMessages[action] || action;
         elements.textInput.value = text;
         sendTextInput();
     });
 });
+
+// File Converter Upload Handler
+const fileConverterInput = document.getElementById('file-converter-input');
+if (fileConverterInput) {
+    fileConverterInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        addMessage('user', `Convert document: ${file.name}`);
+        updateOrbState('processing');
+        elements.orbLabel.textContent = 'Uploading...';
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/api/convert', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // Handle file download
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                
+                // Extract filename from Content-Disposition header if possible
+                let filename = 'converted_document';
+                const disposition = response.headers.get('Content-Disposition');
+                if (disposition && disposition.indexOf('filename=') !== -1) {
+                    filename = disposition.split('filename=')[1].replace(/["']/g, '');
+                } else {
+                    const ext = file.name.toLowerCase().endsWith('.pdf') ? '.docx' : '.pdf';
+                    filename = file.name.replace(/\.[^/.]+$/, "") + ext;
+                }
+
+                // Create hidden download link and click it
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                addMessage('assistant', `✅ Successfully converted! Your file **${filename}** is downloading.`);
+                speak("Your document has been converted and downloaded successfully.");
+            } else {
+                const errData = await response.json();
+                addMessage('assistant', `❌ Conversion failed: ${errData.error || 'Unknown error'}`);
+                speak("I'm sorry, I couldn't convert the document.");
+            }
+        } catch (error) {
+            console.error("Conversion error:", error);
+            addMessage('assistant', `❌ Error during conversion: ${error.message}`);
+        }
+
+        updateOrbState('idle');
+        elements.orbLabel.textContent = 'Listening for "Jarvis"...';
+        
+        // Reset input
+        e.target.value = '';
+    });
+}
 
 
 // ──────────────────────────────────────────────
@@ -1431,8 +1615,17 @@ function init3DCardTilt() {
 // ──────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    initSpeechRecognition();
     initVoices();
+    initSpeechRecognition();
+    initWakeWordListener(); // Initialize wake word functionality
+    updateReminderCount();
+
+    // Small delay to allow audio context to initialize from user interaction later if needed
+    setTimeout(() => {
+        if (state.wakeWordRecognition && !state.isWakeWordListening) {
+            try { state.wakeWordRecognition.start(); } catch(e) {}
+        }
+    }, 1000);
 
     // 3D Visualizer & Physics
     init3DBackground();
