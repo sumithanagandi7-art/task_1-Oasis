@@ -10,11 +10,8 @@ import os
 import re
 import random
 from datetime import datetime
-from zoneinfo import ZoneInfo
 import numpy as np
 from pathlib import Path
-
-IST = ZoneInfo("Asia/Kolkata")
 
 import nltk
 from nltk.stem import LancasterStemmer
@@ -154,7 +151,7 @@ class NLPEngine:
             "loss": round(loss, 4),
             "iterations": n_iter,
             "accuracy": round(acc * 100, 2),
-            "trained_at": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S IST")
+            "trained_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         return self.training_metrics
 

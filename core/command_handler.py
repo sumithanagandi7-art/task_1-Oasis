@@ -9,9 +9,6 @@ import datetime
 import webbrowser
 import urllib.parse
 from typing import Optional
-from zoneinfo import ZoneInfo
-
-IST = ZoneInfo("Asia/Kolkata")
 
 from core.nlp_engine import get_nlp_engine
 from core.weather import get_weather
@@ -118,21 +115,21 @@ class CommandHandler:
         }
 
     def _handle_time(self, text, entities, result, session_id) -> dict:
-        now = datetime.datetime.now(IST)
+        now = datetime.datetime.now()
         time_str = now.strftime("%I:%M %p")
         return {
-            "response": f"The current time is {time_str} IST.",
+            "response": f"The current time is {time_str}.",
             "action": "time",
-            "data": {"time": time_str, "timezone": "IST", "timestamp": now.isoformat()}
+            "data": {"time": time_str, "timestamp": now.isoformat()}
         }
 
     def _handle_date(self, text, entities, result, session_id) -> dict:
-        now = datetime.datetime.now(IST)
+        now = datetime.datetime.now()
         date_str = now.strftime("%A, %B %d, %Y")
         return {
-            "response": f"Today is {date_str} (IST).",
+            "response": f"Today is {date_str}.",
             "action": "date",
-            "data": {"date": date_str, "day_of_week": now.strftime("%A"), "timezone": "IST"}
+            "data": {"date": date_str, "day_of_week": now.strftime("%A")}
         }
 
     def _handle_search(self, text, entities, result, session_id) -> dict:
