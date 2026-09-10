@@ -59,6 +59,8 @@ handler = get_command_handler(socketio=socketio)
 # ──────────────────────────────────────────────
 
 @app.route("/")
+@app.route("/api/index")
+@app.route("/api")
 def index():
     """Serve the main web UI."""
     assistant_name = os.getenv("ASSISTANT_NAME", "Atlas")
