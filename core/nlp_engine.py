@@ -18,18 +18,6 @@ from nltk.stem import LancasterStemmer
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import LabelEncoder
 
-# Download required NLTK data (safe for serverless read-only environments)
-_nltk_data_dir = os.environ.get("NLTK_DATA", "/tmp/nltk_data")
-if _nltk_data_dir not in nltk.data.path:
-    nltk.data.path.append(_nltk_data_dir)
-try:
-    os.makedirs(_nltk_data_dir, exist_ok=True)
-    nltk.download('punkt', download_dir=_nltk_data_dir, quiet=True)
-    nltk.download('punkt_tab', download_dir=_nltk_data_dir, quiet=True)
-    nltk.download('stopwords', download_dir=_nltk_data_dir, quiet=True)
-except Exception:
-    pass
-
 stemmer = LancasterStemmer()
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
@@ -137,10 +125,10 @@ class NLPEngine:
 
         # Train MLP classifier with robust parameters for text classification
         self.model = MLPClassifier(
-            hidden_layer_sizes=(64, 32),
+            hidden_layer_sizes=(32, 16),
             activation='relu',
             solver='adam',
-            max_iter=300,
+            max_iter=60,
             random_state=42,
             early_stopping=False,
         )
