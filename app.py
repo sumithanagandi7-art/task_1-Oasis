@@ -67,6 +67,24 @@ def index():
     return render_template("index.html", assistant_name=assistant_name)
 
 
+@app.route("/debug/env")
+def debug_env():
+    """Debug route to inspect Vercel request environment headers."""
+    from flask import request as req
+    env_data = {
+        "PATH_INFO": req.environ.get("PATH_INFO"),
+        "REQUEST_URI": req.environ.get("REQUEST_URI"),
+        "RAW_URI": req.environ.get("RAW_URI"),
+        "HTTP_X_FORWARDED_URI": req.environ.get("HTTP_X_FORWARDED_URI"),
+        "HTTP_X_MATCHED_PATH": req.environ.get("HTTP_X_MATCHED_PATH"),
+        "HTTP_X_NOW_ROUTE_MATCHES": req.environ.get("HTTP_X_NOW_ROUTE_MATCHES"),
+        "QUERY_STRING": req.environ.get("QUERY_STRING"),
+        "url": req.url,
+        "path": req.path,
+    }
+    return jsonify(env_data)
+
+
 # ──────────────────────────────────────────────
 # REST API Endpoints
 # ──────────────────────────────────────────────
