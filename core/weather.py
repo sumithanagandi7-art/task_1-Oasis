@@ -12,7 +12,7 @@ load_dotenv()
 
 API_KEY = os.getenv("OPENWEATHERMAP_API_KEY", "")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
-DEFAULT_CITY = os.getenv("DEFAULT_CITY", "London")
+DEFAULT_CITY = os.getenv("DEFAULT_CITY", "Mumbai")
 
 
 def get_weather(city: str = None) -> dict:

@@ -326,7 +326,11 @@ function addMessage(type, text, data = {}) {
     messageDiv.className = `message ${type}`;
 
     const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const timeStr = now.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Asia/Kolkata'
+    }) + ' IST';
 
     const avatar = type === 'assistant' ? '🤖' : '👤';
     

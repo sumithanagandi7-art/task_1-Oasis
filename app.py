@@ -172,7 +172,7 @@ def api_get_settings():
     """Get settings and configuration status."""
     return jsonify({
         "assistant_name": os.getenv("ASSISTANT_NAME", "Atlas"),
-        "default_city": os.getenv("DEFAULT_CITY", "London"),
+        "default_city": os.getenv("DEFAULT_CITY", "Mumbai"),
         "has_weather_key": bool(os.getenv("OPENWEATHERMAP_API_KEY") and os.getenv("OPENWEATHERMAP_API_KEY") != "your_api_key_here"),
         "has_gemini_key": bool(os.getenv("GEMINI_API_KEY") and os.getenv("GEMINI_API_KEY") != "your_gemini_api_key_here"),
         "email_address": os.getenv("EMAIL_ADDRESS", ""),
